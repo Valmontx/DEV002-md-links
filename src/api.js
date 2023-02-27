@@ -5,29 +5,26 @@ const fsp = require('fs/promises');
 
 
 // Comprobar siempre si la ruta existe 
-const existsPath = (path) => {
-    if (fs.existsSync(path) === undefined) {
+const existsPath = (filePath) => {
+    if (fs.existsSync(filePath) === undefined) {
         return undefined
-    }else if (path.absolutePath(path)){
     }
 }
 
 // Comprobar si la ruta es absoluta o relativa  
-const verifyPath = (path) => {
-    return (path.absolutePath)
-    // ? path : path.resolve(path)
+const verifyPath = (filePath) => {
+    return (path.isAbsolute(filePath)) ? filePath : path.resolve(filePath)
 }
 // Combertir en absoluta      |  path.resolve --> recorrer el sistema de archivos
-const convertPath = (path) => {
-    return (path.resolve("user", "readme.md"))
+const convertPath = (filePath) => {
+    return (path.resolve(filePath))
 }
 
 // Comprobar si la ruta es un archivo , directorio o una una ruta invalida
-const isFileorDirectory = (path) => {
-    console.log(isFileorDirectory)
-    if (fs.statSync(path).isFile()) {
+const isFileorDirectory = (filePath) => {
+    if (fs.statSync(filePath).isFile()) {
         return 'file'
-    } else if (fs.statSync(path).isDirectory()) {
+    } else if (fs.statSync(filePath).isDirectory()) {
         return 'directory'
     } else {
         return 'invalid path'
@@ -38,32 +35,87 @@ const readDirectory = (directory) => {
     return (fs.readdirSync(directory, ['utf-8', true])) // codificacion: valor de cadena 
 }
 
-const readFile = (path) => {
-    return (fs.readFile(path))
+const readFile = (filePath) => {
+    return (fs.readFile(filePath))
 }
 
 //Devuelve true si es un archivo con la extension .md
 
-const marKdown = (path) => {
-    if (path.extname(path) === '.md') {
+const marKdown = (filePath) => {
+    if (path.extname(filePath) === '.md') {
         return true
     } else {
         console.log('Invalid file')
         return false === "invalid"
     }
 }
+
+const pathJoinDirectory = (directory, file) => path.join(directory, file);
+
 //Obteniendo links  de archivos markdown
-const getLinks = (markdown, path) => {
+const getLinks = (markdown, filePath) => {
     const links = []
-    const regExp = /\[([^\[]+)\](\(.*\))/gm
+    const regExp = /\[([^\[]+)\](\(.*\))/gim
     /* El método exec() ejecuta una busqueda sobre las coincidencias de una expresión
     regular en una cadena especifica. 
     Devuelve el resultado como array, o null .*/
-    let linksTxt = regExp.exec(markdown)
-    
+    let match = regExp.exec(markdown);
+    for(let i = 0; i < marKdown.length; i++ ){
+        if(match !== null){
+             links.push({
+                href: match[4],
+                text: match[2],
+                file: filePath,
+             })
+             match = regExp.exec(markdown);
+        }
+    }
+
+    return links;
 }
 
+//Obteniendo links validos
 
+const getLinksValidated = (markdown, filePath) => {
+    const promises = [];
+    const regex = /(\[(.*?)\])(\((.*?)\))/gim;
+    let match = regex.exec(markdown);
+    for (let i = 0; i < markdown.length; i++) {
+        if (match !== null) {
+            let theMatch = match;
+            promises.push(fetch(match[4]).then((response) => {
+                return {
+                    href: theMatch[4],
+                    text: theMatch[2],
+                    file: filePath,
+                    status: response.status,
+                    ok: (response.ok) ? 'ok' : 'fail',
+                }
+            }))
+            match = regex.exec(markdown);
+        }
+    }
+    return Promise.all(promises);
+}
+const uniqueLinks = (data) => {
+    const unique = new Set(data.map((link) => link.href)).size;
+    return unique;
+};
+//links rotos 
+const brokenLinks = (data) => {
+    let brokenLinks = [];
+    data.forEach(link => {
+        if (link.ok === 'fail') {
+            brokenLinks.push(link.href);
+        }
+    });
+    return brokenLinks.length;
+}
+
+// total de links
+const totalLinks = (links) => {
+    return links.length;
+}
 
 
 
@@ -80,6 +132,11 @@ module.exports = {
     readFile,
     marKdown,
     getLinks,
+    pathJoinDirectory,
+    getLinksValidated,
+    brokenLinks,
+    totalLinks,
+    uniqueLinks
 
 
 
