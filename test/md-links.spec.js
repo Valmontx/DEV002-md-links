@@ -1,5 +1,5 @@
 
-const { existsPath, verifyPath } = require('../src/api');
+const  { existsPath, verifyPath}  = require('../api.js')
 
 
 describe('existsPath', () => {

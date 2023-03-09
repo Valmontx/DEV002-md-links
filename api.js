@@ -33,7 +33,8 @@ const checkFileOrDir = (filePath) => {
         console.log('No es un archivo ni directorio - ruta inválida')
     }
 }
-// Leyendo directorio sincrono
+
+// Leyendo contenido directorio sincrono
 const readDirectory = (filePath) => {
     return (fs.readdirSync(filePath))
 }
@@ -54,8 +55,9 @@ const readFile = (filePath) => {
 
     });
 };
-readFile('\DEV002-md-links\\ README.md')
-.then(contenido => console.log(contenido))
+const pruebaArchivo = './prueba/documentos/ex.md'
+readFile(pruebaArchivo)
+.then(contenido => console.log(getLinks(contenido,pruebaArchivo)))
 .catch(err => console.log('Error: No se puede leer el archivo', err ))
 
 
@@ -69,7 +71,7 @@ const marKdown = (filePath) => {
         console.log('El arhivo no tiene una extensión .md')
     }
 }
-console.log(marKdown('api.js'));
+// console.log(marKdown('api.js'));
 // console.log(marKdown('README.md'))
 // console.log(marKdown('file.md'))
 
@@ -82,51 +84,59 @@ const arrayLinks = (filePath) => {
     } else if (isDirectory(filePath)) {
         const arrayFileAndDir = readDirectory(filePath)
         arrayFileAndDir.map((arrayFileAndDir) => {
-            arrayMd = arrayMd.concat(arrayLinks(`${filePath}/${arrayFileAndDir}`))
+            arrayMd = arrayMd.concat(arrayLinks(filePath, arrayFileAndDir))
         });
     }
 
     return arrayMd;
 }
-console.log(arrayLinks)
+// console.log(arrayLinks)
 
 // Uniendo ruta con directorio
 const pathJoinDirectory = (directory, filePath) => path.join(directory, filePath);
 
-// Obtener links - retorna un objeto con las siguientes propiedades href, text , file
-const getLinks = (marKdown , filePath) => {
+//  encontrar links - retorna un objeto con las siguientes propiedades href, text , file
+const getLinks = (marKdown , filePath) => { 
     const links = []
     
     const regex = /\[(.+?)\]\((https?:\/\/[^\s]+)(?: "(.+)")?\)|(https?:\/\/[^\s]+)/ig;
-           let match = regex.exec(marKdown);  /* El método exec() ejecuta una busqueda sobre las coincidencias de una expresión
+        //   console.log('funcion',marKdown)
+    let match = regex.exec(marKdown);  /* El método exec() ejecuta una busqueda sobre las coincidencias de una expresión
+           
            regular en una cadena especifica. 
            Devuelve el resultado como array, o null .*/
            
                 for(let i = 0; i < marKdown.length; i++){
                     if(match !== null){
+                        // console.log('MATCH',match)
                         links.push({
                             
                             href: match[2],
                             text: match[3],
                             file: filePath,
                         })
-                        match= regex.exec(markdown)
+                        match= regex.exec(marKdown)
                     }
                 }
                 return links;
                 
     };
-          console.log(getLinks({marKdown}))
+
+        //   console.log(getLinks({marKdown}))
 
 //  Validar links -  el objeto con las misma propiedades pero agregandole el estado ok o fail
 
 const getLinksValidated = (links) => {
     const linkValidate = links.map((links) => {
+        
         return axios.get(links.href)
             .then((res) => {
-                if (res.status >= 200 && res.status <= 299) {
+                if (res.status >= 200 && res.status <= 299) { // si la solicitud fue exitosa
+                    console.log('REVISANDO CONTENIDO DE',links)
                     return {
+                        
                         href: links.href,
+                        
                         text: links.text,
                         file: links.file,
                         ok: (response.ok)
@@ -154,17 +164,10 @@ const getLinksValidated = (links) => {
 };
 
 
-const statLinks = (arrlink) => {
-    const uniqueLinks = new Set(arrlink.map((link) => link.href)).size; //---> Esto devolvera el numero de elementos únicos
-    return {
-        Total: arrlink.length,
-        Unique: uniqueLinks
-    }
 
-};
 // resultados del stats 
 const validateStatResul = (arrlink) => {
-    const totalLinks = arrlink.map((links) => links.href)
+    const totalLinks = arrlink.map((links) => links.href).size; //---> Esto devolvera el numero de elementos únicos
     const uniqueLinks = new Set(arrlink.map((links) => links.href)).size;
     const brokenLinks = arrlink.filter((links) => links.ok === '404')
 
@@ -175,17 +178,6 @@ const validateStatResul = (arrlink) => {
     }
 
 };
-
-
-
-
-
-
-
-
-
-
-
 
 module.exports = {
     existsPath,
@@ -198,8 +190,4 @@ module.exports = {
     pathJoinDirectory,
     getLinksValidated,
     validateStatResul,
-    statLinks
-
-
-
 };
