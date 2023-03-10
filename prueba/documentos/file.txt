@@ -1,1 +1,13 @@
 Hola Mundo!
+
+let linkstxtarr = readFile(file).match(regex)
+    if(linkstxtarr !== null){
+     let result = md.render(readFile(file)); //"render()" se usa para renderizar el contenido del archivo. EnLa variable "result" se almacena el resultado de la renderización.
+     const dom = new JSDOM(result);
+     linkstxtarr = dom.window.document.querySelector("<a>")
+    }
+
+
+regex:/\[(.+?)\]\((https?:\/\/[^\s]+)(?: "(.+)")?\)|(https?:\/\/[^\s]+)/ig;
+    
+    
