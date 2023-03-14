@@ -11,3 +11,62 @@ let linkstxtarr = readFile(file).match(regex)
 regex:/\[(.+?)\]\((https?:\/\/[^\s]+)(?: "(.+)")?\)|(https?:\/\/[^\s]+)/ig;
     
     
+//   Saber sí la ruta es relativa ó 'absoluta'  || resolve recorre el sistema de archivos.
+const absolutePath = (filePath) => {
+    if (path.isAbsolute(filePath) ? filePath : path.resolve(filePath)) {
+        // Devuelve la ruta absoluta
+        console.log(`ruta resuelta: ${absolutePath}`)
+    }
+}
+
+ const promises = []
+    promises = links.map((link) => axios({
+    method: 'GET',
+    url: link.href,
+    
+    })
+        .then((res) => {
+            if ( res.status >= 200 && res.status < 300) { // si la solicitud fue exitosa
+
+                return {
+
+                    href: link.href,
+                    text: link.text,
+                    file: link.file,
+                    ok: (res.ok)
+                };
+            }
+        })
+        .catch((err) => {
+            (err.status >= 400)
+            return {
+
+                href: link.href,
+                text: link.text,
+                file: link.file,
+                status: res.response ? 404 : "ERROR",
+                ok: 'Fail',
+           };
+        })
+    )
+    return Promise.all(promises);
+
+
+    const regex = /(\[(.*?)\])(\((.*?)\))/gim;
+    let match = regex.exec(filePath)
+    for (let i = 0; i < filePath.length; i++) {
+        if (match !== null) {
+            let matches = match;
+            promises.push(fetch(match[3])
+                .then((response) => {
+                    return {
+                        href: matches[3],
+                        text: matches[2],
+                        file: filePath,
+                        status: response.status,
+                        ok: (response.status) ? 'ok' : fail,
+                    }
+                }))
+            matches = regex.exec(filePath)
+        }
+    } return Promise.all(promises);

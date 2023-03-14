@@ -16,10 +16,10 @@
     "fetch": "^1.1.0",
     "jsdom": "^21.1.0",
     "markdown-it": "^13.0.1",
-    "node-fetch": "^3.3.0"
+    "node-fetch": "^2.6.9"
   },
   "bin": {
-    "md-links": "./api.js"
+    "md-links": "./cli.js"
   },
   "description": "Librería ejecutable que analiza los archivos (Markdown) y valida los links",
   "main": "index.js",

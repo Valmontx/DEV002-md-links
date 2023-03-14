@@ -17,20 +17,16 @@ let options1 = process.argv[4]; // Read files and extract links
 const validate = args.includes("--validate");
 const stats = args.includes("--stats");
 
+
 if (filePath) {
-  console.log('----------------BIENVENIDO A MD-LINKS--------------'.bgBlue)
-  console.log('Instrucciones:'.bgGreen)
-  console.log('1. Enviar la ruta.'.bgGreen)
-  console.log('2. Para poder validar tu ruta ingresada debes agregar la opcion "--validate"'.bgGreen)
-  console.log('3. Para saber el total de los links debes agregar opcion"--stats"'.bgGreen)
-  console.log('4. Para saber la cantidad de links rotos , agregar ambas opciones" --stats" "--validate" luego de tu ruta ingresada'.bgGreen)
-}
-if (options === null && options === undefined && options === "" || options1 === undefined) {
+
+if (options === null && options === undefined && options === "" || options1 === undefined)  {
+
   mdLinks(filePath, { validate: false, stats: false })
-    .then((res) => res);
+    .then((res) => console.log(res)).catch((err)=> err);
 } else if (options == validate && options1 == undefined) {
   mdLinks(filePath, { validate: false, stats: false })
-    .then((res) => res);
+    .then((res) => console.log(res));
 } else if (options === stats && options1 == undefined) {
 mdLinks(filePath, {validate: false , stats: false})
 .then((res) => res);
@@ -38,11 +34,13 @@ mdLinks(filePath, {validate: false , stats: false})
   mdLinks(filePath, {validate: true , stats: true})
   .then((res) => res);
 } else {
-  console.log('ERROR')
+  console.log('por favor ingrese un comando valido')
 } 
+} else{
+  console.log('por favor ingresar un ruta')
+}
 
-      
-          
+// mdLinks('./prueba/documentos/ex.md')
 
 
 //  else if(validate && stats) {

@@ -8,7 +8,7 @@ describe('existsPath', () => {
     expect(typeof existsPath ).toBe('function');
   });
 it('should return the validate path', () =>{
-   expect(existsPath('/valeria/md-links/noexiste.md')).toBe('C:\\Users\\Ronald Nicolas\\DEV002-md-links\\index.js')
+   expect(existsPath('./prueba/documentos/ex.md')).toBe('./prueba/documentos/ex.md')
   
 })
 });
@@ -19,7 +19,7 @@ describe('existsPath', () => {
   expect(typeof existsPath).toBe('function');
 });
 it('should return an invalid path',() =>{
-  it(verifyPath('/valeria/md-links/noexiste.md')).catch((err) => {
-  expect(err).toBe('invalid path')
+  it(verifyPath('./valeria/md-links/noexiste.md')).catch((err) => {
+  expect('./prueba/documentos/ex.md').toBe(console.log(err))
   }) 
 })

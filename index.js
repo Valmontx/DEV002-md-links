@@ -1,55 +1,71 @@
 
-const color = require('colors');
-const { readFile } = require('node:fs');
+const { readFile, Stats } = require('node:fs');
+const { resolve } = require('node:path');
+
 const path = require('node:path');
 const readline = require('readline')
-const { existsPath, absolutePath, marKdown, getLinks, checkFileOrDir } = require('./api.js');
+const { existsPath, absolutePath, checkFileOrDir, readFileasync, getLinks, getLinksValidated, readDirectory, arrayMd } = require('./api.js');
 
 // Funcion mdLinks
-function mdLinks (filePath, options )  {
+const mdLinks = (filePath, options = {validate: false, stats: false}) => {
 
+  const isabsolutePath = absolutePath(filePath)
   return new Promise((resolve, reject) => {
-    if (!existsPath(filePath)) {
-      reject(`ERROR: Debe ingresar una ruta valida`.bgGreen)
-    if(!absolutePath(filePath)){
-      const convertAbsolute = (path.resolve(filePath))
-       filePath = convertAbsolute
-       
-    } if (!checkFileOrDir(filePath)){
-      (type !== 'File' && type !== 'directory')
-      reject('No es archivo ni directorio')
+    if (!existsPath(isabsolutePath) === null ) {
+      console.log(' por favor ingrese un ruta valida')
+      // Verificando si la ruta existe
+    } else {
+      console.log(`La ruta ${filePath} existe`)
+      // verificar si es archivo - directorio - ruta invalida 
+      // FILE 
+      if (checkFileOrDir(isabsolutePath) === ' file') {
+        const readMd = readFileasync(isabsolutePath)
+        if (readMd.legth >= 1) {
+          const linksMd = getLinks(isabsolutePath)
 
-    }if(!readFile(filePath)){
-      reject('No se puede leer el archivo')
-     
-    }if (!marKdown !== '.md') {
-      reject('No se encontraron extensiones .md ')
+          if (linksMd.legth >= 1 && options.validate) {
+            resolve((getLinksValidated(linksMd)))
+
+          } else if (linksMd.legth >= 1 && options.validate !== true) {
+
+            resolve(getLinks(linksMd))
+
+          } else if (linksMd.length === 0) {
+            return reject(new Error('No se encontraron links en el archivo'))
+          }
+        }
+
+        // DIRECTORY 
+      } else if (checkFileOrDir(isabsolutePath) === 'directory') {
+        reject('No es archivo ni directorio')
+        const readDirec = readDirectory(isabsolutePath)
+        if (readDirec.length >= 1) {
+          resolve(arrayMd(isabsolutePath))
+        }
+        const linksmd = getLinks(isabsolutePath)
+        if (linksmd.length >= 1 && options.validate !== true) {
+          resolve(getLinksValidated(linksmd))
+        } if (linksmd.length === 0) {
+          reject(`No se encontraron links ${isabsolutePath}`)
+
+        }
+      }
     }
-      const linksFound = getLinks(absolutePath)
-    if (linksFound.length >= 1 && options.validate) {
-      resolve((api.getLinks(linksFound)))
-    } else if (linksFound.length >= 1 && options.validate != true) {
-      resolve((api.getLinks(absolutePath)))
-    } else if (linksFound.length == 0) {
-      reject(new Error('No se encontraon links.'))
-    }
-
-
-  }
-})
-
-
+  })
 }
-// mdLinks(absolutePath ).then(console.log)
-
-// then((resultado) => console.log(resultado))
-// .catch((error) => console.log(error));
+// .then(resultado => console.log(resultado))
+//  .catch(error => console.log(error));
 
 
+ 
 
 
-//C:\Users\Ronald Nicolas\DEV002-md-links\index.js C:\Users\Ronald Nicolas\DEV002-md-links
-//Current directory: C:\Users\Ronald Nicolas\DEV002-md-links\src
+
+// then(resultado => console.log(resultado))
+// .catch(error => console.log(error));
+
+//C:\Users\Ronald Nicolas\DEV002-md-links
+
 
 module.exports = {
   mdLinks
