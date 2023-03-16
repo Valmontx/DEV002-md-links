@@ -19,6 +19,15 @@ const absolutePath = (filePath) => {
     }
 }
 
+ es ruta absoluta ? cambiarla absoluta
+if (path.isAbsolute(filePath)) {
+       return absolutePath
+     } else if  (path.resolve(filePath)){
+        console.log(`ruta resuelta`)
+     }
+
+
+
  const promises = []
     promises = links.map((link) => axios({
     method: 'GET',
@@ -70,3 +79,18 @@ const absolutePath = (filePath) => {
             matches = regex.exec(filePath)
         }
     } return Promise.all(promises);
+
+    // Comprobar si la ruta es un archivo , directorio o una una ruta invalida
+// const checkFileOrDir = (filePath) => {
+//     const stats = fs.statSync(filePath)
+//     if (stats.isFile(filePath)) {
+//         console.log("Path is file:", stats.isFile());
+//         marKdown(filePath)
+
+//     } else if (stats.isDirectory(filePath)) {
+//         console.log("Path is directory:", stats.isDirectory());
+//         readDirectory(filePath)
+//     } else {
+//         console.log('No es un archivo ni directorio - ruta inválida')
+//     }
+// }
