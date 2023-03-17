@@ -94,3 +94,39 @@ if (path.isAbsolute(filePath)) {
 //         console.log('No es un archivo ni directorio - ruta inválida')
 //     }
 // }
+
+
+// const readFileasyncValidated = (filePath) => fsp.readFile(filePath)
+//      .then((data) =>{
+//         return getLinksValidated(filePath,data)
+//     })
+//     .catch((err) => {
+//      console.log(err, 'No se ha encontrado un archivo')
+//     })
+    
+
+    otra manera de validar links con axios
+      return Promise.all(links.map((data) => axios.get(data.href)
+//         .then((result) => {
+//             // console.log(result.status,' verificando estado')
+//             const objetValidate = {
+//                 ...data, // objeto de propagacion 
+//                 status: result.status,
+//                 ok: result.statusText ? 'ok' : 'fail',
+//             }
+//             return objetValidate
+//         })
+//         .catch((err) => {
+//             // console.log(err.status)
+//             let respuesta = err.response
+//             const objetcValidate = {
+//                 ...data,
+//                 status: err?.response?.status,
+//                 ok: 'fail',
+//             }
+//             return objetcValidate
+//         })
+//     ))
+// 
+
+

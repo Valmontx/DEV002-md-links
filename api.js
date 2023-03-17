@@ -1,9 +1,8 @@
 const path = require('path');
 const fs = require('fs'); // Modulo File System
 const fsp = require('fs/promises');
-const axios = require('axios');
+
 const fetch = require('node-fetch');
-const { get } = require('http');
 
 
 
@@ -98,15 +97,6 @@ const readFileasync = (filePath) => fsp.readFile(filePath)
            
 
 
-// const readFileasyncValidated = (filePath) => fsp.readFile(filePath)
-//      .then((data) =>{
-//         return getLinksValidated(filePath,data)
-//     })
-//     .catch((err) => {
-//      console.log(err, 'No se ha encontrado un archivo')
-//     })
-    
-
 //  const pruebaArchivo = './prueba/documentos/ex.md'
 // readFileasync(pruebaArchivo)
     
@@ -121,15 +111,18 @@ const pathJoinDirectory = (directory, filePath) => path.join(directory, filePath
 const getLinks = (fileMd, filePath) => {
     const links = []
     const regex = /(\[(.*?)\])(\((.*?)\))/gim;
-    //   console.log('funcion',marKdown)
+    const regexTxt = /\(([^)]+)\)/;
     let match = regex.exec(fileMd);  /* El método exec() ejecuta una busqueda sobre las coincidencias de una expresiónregular en una cadena especifica.    Devuelve el resultado como array, o null .*/
 
     for (let i = 0; i < fileMd.length; i++) {
         if (match !== null) {
+           
+        let link = regexTxt.exec(match[3])
+        // console.log(link, 'verificando la expresion regular')
             // console.log('MATCH',match)
             links.push({
 
-                href: match[3],
+                href: link[1],
                 text: match[2],
                 file: filePath,
             })
@@ -144,86 +137,79 @@ const getLinks = (fileMd, filePath) => {
 
 //  Validar links -  el objeto con las misma propiedades pero agregandole el estado ok o fail
 
-const getLinksValidated = (links) => {
-  return Promise.all(links.map((data) => axios.get(data.href)
-        .then((result) => {
-            // console.log(result.status,' verificando estado')
-            const objetValidate = {
-                ...data, // objeto de propagacion 
-                status: result.status,
-                ok: result.statusText ? 'ok' : 'fail',
+const getLinksValidated = (links ) => {
+
+     console.log({links}, 'Se muestran los links')
+    
+return Promise.all(links.map((link => {
+   console.log(link.href, 'debe mostrar href');
+    return fetch(link.href)
+        .then((res) => {
+// console.log(res.status, 'verificando respuesta exitosa')
+            if (res.status >= 200 && res.status < 300)  { // si la solicitud fue exitosa
+                const data = {
+
+
+                    href: link.href,
+                    text: link.text,
+                    file: link.file,
+                    ok: res.ok ? '200' : 'fail'
+                    
+
+                };
+                return data;
             }
-            return objetValidate
-        })
-        .catch((err) => {
-            // console.log(err.status)
-            let respuesta = err.response
-            const objetcValidate = {
-                ...data,
-                status: err?.response?.status,
-                ok: 'fail',
-            }
-            return objetcValidate
-        })
-    ))
+            }) 
+            .catch((err) => { // el código dentro del bloque `catch` no lanza una excepción, entonces la promesa siempre se resolverá con `undefined`. Por lo tanto, si desea propagar cualquier error al siguiente bloque `catch` o para manejarlo, debo de lanzar la excepción o devolver una nueva promesa rechazada en consecuencia.
+                // console.log(err,'verificando si es un mensage de error')
+            
+                if (err.response >= 400) throw err; 
+               const dataErr =  {
+                   
+                    ...link,
+                    status: err.response ? 404 :  'Error' ,
+                    message: 'Fail'
+                };
+                return dataErr;
+                
+            
+            
+            })
+
+    })))
+}
+
+// resultados del stats  links totales y unicos  opcion --stats
+const validateStatResul = (links) => {
+   console.log(links.href, 'verificando')
+
+    const totalLinks = links.map((link) => link);
+    
+    const uniqueLinks = new Set(links.map((link) => link)).size; //---> Esto devolvera el numero de elementos únicos
+
+
+    return {
+        Total: totalLinks.length,
+        Unique: uniqueLinks,
+        
+    }
+
+};
+
+// resultado de los links totales , unicos y rotos opciones --validate --stats
+
+const brokenLinks = (links) => {
+    console.log(links,'Deberia mostrarse los links');
+    brokenLinks = links.filter((link) => link.ok === 'fail').length
+    return {
+        Total: totalLinks,
+        Unique: validateStatResul(links).Unique,
+        Broken: brokenLinks,
+    }
 }
 
 
 
-
-
-// return Promise.all(links.map((link => {
-//     return fetch(link.href)
-//         .then((res) => {
-
-//             if (res.status >= 200 && res.status < 300) { // si la solicitud fue exitosa
-//                 const data = {
-
-
-//                     href: link.href,
-//                     text: link.text,
-//                     file: link.file,
-//                     ok: (res.ok)
-
-//                 };
-//                 return data;
-//             }
-//             })
-//             .catch((err) => {
-//                 (err.status >= 400)
-//                const dataErr =  {
-
-//                     href: link.href,
-//                     text: link.text,
-//                     file: link.file,
-//                     status: res.response ? 404 : "ERROR",
-//                     message: 'No status',
-//                 };
-//                 return dataErr;
-//             })
-
-//     })))
-
-
-// }
-
-
-
-
-
-// resultados del stats 
-const validateStatResul = (arrlink) => {
-    const totalLinks = arrlink.map((link) => link.href).size; //---> Esto devolvera el numero de elementos únicos
-    const uniqueLinks = new Set(arrlink.map((link) => link.href)).size;
-    const brokenLinks = arrlink.filter((link) => link.ok === '404')
-
-    return {
-        Total: totalLinks.length,
-        Unique: uniqueLinks.size,
-        Broken: brokenLinks.length
-    }
-
-};
 
 module.exports = {
     existsPath,
@@ -238,4 +224,5 @@ module.exports = {
     arrayMd,
     getLinksValidated,
     validateStatResul,
+    brokenLinks,
 };

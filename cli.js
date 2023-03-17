@@ -23,16 +23,16 @@ if (filePath) {
 if (options === null && options === undefined && options === "" || options1 === undefined)  {
 
   mdLinks(filePath, { validate: false, stats: false })
-    .then((res) => console.log(res)).catch((err)=> err);
+    .then((res) => res)
 } else if (options == validate && options1 == undefined) {
   mdLinks(filePath, { validate: true, stats: false })
     .then((res) => console.log(res).catch((err)=> console.log(err)));
 } else if (options === stats && options1 == undefined) {
-mdLinks(filePath, {validate: true , stats: false})
+mdLinks(filePath, {validate: true, stats: false})
 .then((res) => res);
 } else if ((options === validate && options1 === stats) || options === stats && options1 === validate){
   mdLinks(filePath, {validate: true , stats: true})
-  .then((res) => res);
+  .then((res) => console.log(res));
 } else {
   console.log('por favor ingrese un comando valido')
 } 
