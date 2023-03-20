@@ -80,11 +80,6 @@ const cli = (filePath, argv) => {
 
 }
 
-
-
-
-
-
 cli(filePath, argv)
 
 

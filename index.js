@@ -4,7 +4,7 @@ const { resolve } = require('node:path');
 const { colors } = require('colors')
 const path = require('node:path');
 const readline = require('readline')
-const { existsPath, absolutePath, getLinksValidated, isaFile, fileMd, readFileasync, validateStatResul } = require('./api.js');
+const { existsPath, absolutePath, getLinksValidated, isaFile, fileMd, readFileasync } = require('./api.js');
 
 
 // Funcion mdLinks
@@ -28,7 +28,8 @@ const mdLinks = (filePath, options = { validate: true, stats: true }) => {
         readFileasync(isabsolutePath).then((linksMd) => {
                  resolve(linksMd)
             //  resolve(linksMd, 'solo dede mostrar el array de objeto')
-          if (linksMd.length >= 1 && options.validate) {
+          
+            if (linksMd.length >= 1 && options.validate) {
             getLinksValidated(linksMd).then((resultado) => {
               // console.log( linksMd, 'Que muestra esto?')
                      
