@@ -2,11 +2,11 @@
 
 ## Índice
 
-* [1. ¿Qué es md-links?](#1-preámbulo)
-* [2. ¿Qué es markdown?](#2-resumen-del-proyecto)
-* [3. Resumen del proyecto](#3-objetivos-de-aprendizaje)
-* [4. Dependencias](#3-objetivos-de-aprendizaje)
-* [5. Diagrama de flujo](#3-objetivos-de-aprendizaje)
+* [ ¿Qué es md-links?](#1-preámbulo)
+* [ ¿Qué es markdown?](#2-resumen-del-proyecto)
+* [ Resumen del proyecto](#3-objetivos-de-aprendizaje)
+* [ Dependencias](#3-objetivos-de-aprendizaje)
+* [ Diagrama de flujo](#3-objetivos-de-aprendizaje)
 
 
 
@@ -15,7 +15,7 @@
 ***
 
 ## 1. ¿Que es md-links?
-Es una librería ejecutable [CLI], instalable para cualquier proyecto, con la finalidad de validar links dentro un archivo markdown mostrando una estadística si lo solicitan.  
+Es una librería ejecutable **CLI** instalable para cualquier proyecto, con la finalidad de validar links dentro un archivo markdown mostrando una estadística si lo solicitan.  
 
 ## 2. ¿Que es markdown?
 [Markdown](https://es.wikipedia.org/wiki/Markdown) es un lenguaje de marcado
@@ -39,21 +39,32 @@ algunas estadísticas.
 Un breve ejemplo de su funcionalidad 
 
    Para iniciar escribir solo `md-links`
-  ![bienvenida en la terminal](../Downloads/inicio%20de%20md-links.png)
+   
+  ![inicio de md-links](https://user-images.githubusercontent.com/108588943/226356561-7dc8503f-6edc-412c-9517-da9d19463340.png)
+
    
    Solo se retona los links encontrados en el archivo o directorio. 
-  ![Segundo paso](../Downloads/segundo%20paso%20en%20md-links%20.png)
    
-   Luego para validar se debe agregar la opcion `--validate` 
-  ![Alt text](../Downloads/tercer%20paso%20en%20md-links.png)
+  ![segundo paso en md-links ](https://user-images.githubusercontent.com/108588943/226356639-eb371a87-77fd-470c-9b22-83a9f19864f5.png)
+
+   
+   Luego para validar se debe agregar la opcion `--validate`
+   
+  ![tercer paso en md-links](https://user-images.githubusercontent.com/108588943/226356741-ddbe435b-0515-4888-a3b7-2bc6f169527b.png)
+
  
    De la misma forma  con la opcion `--stats` se podra saber cuál es el total de links y los únicos.
-  ![Alt text](../Downloads/5to%20paso%20md-links.png)
+   
+  ![5to paso md-links](https://user-images.githubusercontent.com/108588943/226356803-541907dc-8900-4067-81f0-c5644c4836f8.png)
 
+   
    Ingresando ambas opciones `--validate` `--stats` retornará : total , únicos y rotos. 
-  ![Alt text](../Downloads/4to%20paso%20de%20md-links.png)
+   
+  ![4to paso de md-links](https://user-images.githubusercontent.com/108588943/226356893-f41e3483-5f97-4a1d-aa30-fd52f77dac3e.png)
 
-  ## 4. Dependecias utilizadas 
+
+ 
+ ## 4. Dependecias utilizadas 
     - colors: ^1.4.0
     - fetch: ^1.1.0
     - node-fetch : ^2.6.9
@@ -61,6 +72,5 @@ Un breve ejemplo de su funcionalidad
 
 
   ## 5. Diagrama de flujo con Drawio
+![Diagrama de flujo md-links drawio](https://user-images.githubusercontent.com/108588943/226357020-0be48f82-4812-4984-b272-b8e220f98563.png)
 
-
-![Diagrama de flujo](../Downloads/Diagrama%20de%20flujo%20md-links.drawio.png)
