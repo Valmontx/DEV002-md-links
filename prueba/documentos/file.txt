@@ -130,3 +130,27 @@ if (path.isAbsolute(filePath)) {
 // 
 
 
+if (filePath) {
+
+if ((options === null || options === undefined || options === "") || options === undefined)  {
+
+  mdLinks(filePath, { validate: false, stats: false })
+    .then((res) => res)
+
+} else if (options == validate && options1 == validate  ) {
+  mdLinks(filePath, { validate: true })
+    .then((res) => console.log(res).catch((err)=> console.log(err)));
+
+  } else if (options === stats && validate == undefined) {
+mdLinks(filePath, {stats: true, validate: false})
+.then((res) => res);
+
+} else if ((options === validate && options === stats) || options === stats && options === validate){
+  mdLinks(filePath, {validate: true , stats: true})
+  .then((res) => console.log(res));
+} else {
+  console.log('por favor ingrese un comando valido')
+} 
+} else{
+  console.log('por favor ingresar un ruta')
+}

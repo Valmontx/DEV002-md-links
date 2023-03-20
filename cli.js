@@ -1,46 +1,102 @@
 #!/usr/bin/env node
-const { stat } = require('fs');
+const { stat, readFileSync } = require('fs');
 const { resolve } = require('path');
+const { argv } = require('process');
 const process = require('process');
-const {mdLinks} = require('./index.js');
+const { validateStatResul, getLinksValidated } = require('./api.js');
+const { mdLinks } = require('./index.js');
 
-// Grab provided args. 
-const [, , ...args] = process.argv
-// console.log(process.argv)
+
+
 
 // Recibe argumentos de lina de comandos.
 let filePath = process.argv[2];
-let options = process.argv[3];
-let options1 = process.argv[4]; // Read files and extract links
+let options = process.argv[3];// Read files and extract links
+let options1 = process.argv[4];
+
+const cli = (filePath, argv) => {
+  // Grab provided args. 
+  const [, , ...args] = process.argv
+  const validate = argv.includes("--validate");
+  const stats = argv.includes("--stats");
 
 
-const validate = args.includes("--validate");
-const stats = args.includes("--stats");
+  if (filePath == undefined) {
+    console.log(' 💗 Ｂｉｅｎｖｅｎｉｄｏ  ａ  ｍｄ－ｌｉｎｋｓ 💗')
+    console.log(' 📝  Las siguientes instrucciones son :'.bgMagenta);
+    console.log('  📌 Escribe md-links en la terminal, luego agregar una ruta valida.  ')
+    console.log('  📌 Para poder ver:  (url,status,ruta y el mensaje) ingresar la opcion  (--validate) luego de su ruta valida.')
+    console.log('  📌 Para poder ver:  (Los links únicos y el total de los links)  ingresar la opcion (--stats) despues de su ruta valida.');
+    console.log('  📌 Para poder ver:  ( El total, los links únicos y los links rotos) ingresar las opciones (--validate -- stats) despues de su ruta valida.')
 
+  } if
+    (validate && stats) {
+    mdLinks(filePath, { validate: true })
+      .then((res) => {
+        const validateStats = validateStatResul(res)
+        console.log(`Total: ${validateStats.Total} Unique:${validateStats.Unique} Broken: ${validateStats.Broken}`.bgCyan)
+      }).catch((err) => {
+        console.log(err, 'debe ingresar un comando valido')
+      })
+    return
+  
+  
+  }
+  if (validate) {
+    mdLinks(filePath, { validate: true })
+      .then((resultado) => {
+        resultado.forEach(element => {
+          // console.log(getLinksValidated(element))
+          console.log(`\nhref:  ${element.href}  \ntext: ${element.text}  \nfile: ${element.file}  \nmessage:${element.ok} \nstatus: ${element.status}`.bgMagenta)
+        });
+      }).catch((err) => {
+        console.log(err)
+      })
+    return
+  }
 
-if (filePath) {
-
-if (options === null && options === undefined && options === "" || options1 === undefined)  {
-
-  mdLinks(filePath, { validate: false, stats: false })
-    .then((res) => res)
-} else if (options == validate && options1 == undefined) {
-  mdLinks(filePath, { validate: true, stats: false })
-    .then((res) => console.log(res).catch((err)=> console.log(err)));
-} else if (options === stats && options1 == undefined) {
-mdLinks(filePath, {validate: true, stats: false})
-.then((res) => res);
-} else if ((options === validate && options1 === stats) || options === stats && options1 === validate){
-  mdLinks(filePath, {validate: true , stats: true})
-  .then((res) => console.log(res));
-} else {
-  console.log('por favor ingrese un comando valido')
-} 
-} else{
-  console.log('por favor ingresar un ruta')
+  if (stats) {
+    mdLinks(filePath, { validate: false })
+      .then((res) => {
+        const validateOnlyStat = validateStatResul(res)
+        console.log(`Total: ${validateOnlyStat.Total} Unique: ${validateOnlyStat.Unique} `.bgCyan)
+      }).catch((err) => {
+        console.log(err)
+      })
+  } 
+  if (validate) {
+    mdLinks(filePath, { validate: false })
+    then((response) => {
+      response.forEach(element => {
+        console.log(`\nhref:  ${element.href}  \ntext: ${element.text}  \nfile: ${element.file}`.bgBlue)
+      })
+    }).catch((err) => {
+      console.log(err)
+    })
+    return
+  
+ 
 }
 
-// mdLinks('./prueba/documentos/ex.md')
+}
+
+
+
+
+
+
+cli(filePath, argv)
+
+
+
+
+
+
+
+
+
+
+// mdLinks('./prueba/documentos/links.md/file.md')
 
 
 //  else if(validate && stats) {
